@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "id": "admin",
+      "username": "admin",
+      "password": "admin",
+      "role": "admin"
+    }
+  ],
+  "specialties": [],
+  "doctors": [],
+  "appointments": [],
+  "hasChangedAdminCredentials": true
+}
