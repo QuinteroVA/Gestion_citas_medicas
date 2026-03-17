@@ -24,7 +24,7 @@ export function LoginView({ loginUser, loginPass, loginError, showInitialAccess,
             Usuario
             <div className="relative">
               <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
-                <i className="fa fa-user-o"></i>
+                <i className="iconoir-user"></i>
               </span>
               <input
                 value={loginUser}
@@ -39,7 +39,7 @@ export function LoginView({ loginUser, loginPass, loginError, showInitialAccess,
             Contraseña
             <div className="relative">
               <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
-                <i className="fa fa-lock"></i>
+                <i className="iconoir-lock"></i>
               </span>
               <input
                 type="password"

@@ -43,3 +43,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Local data storage (your project data folder)
+data/

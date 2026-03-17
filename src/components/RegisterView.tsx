@@ -68,7 +68,7 @@ export function RegisterView(props: RegisterViewProps) {
     <section>
       <h2 className="mb-4 text-2xl font-bold">Registro</h2>
       <div className="grid gap-4 lg:grid-cols-2">
-        <form onSubmit={onCreate} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <form onSubmit={onCreate} className="rounded-xl border border-slate-200 bg-white p-4 shadow-[0_10px_22px_rgba(15,23,42,0.12)]">
           <h2 className="text-xl font-bold">Nueva Cita</h2>
           <p className="mt-3 text-xs font-semibold">Tipo de Documento</p>
           <div className="mt-1 grid grid-cols-2 gap-2">
@@ -139,7 +139,7 @@ export function RegisterView(props: RegisterViewProps) {
           </button>
           <InlineMessage message={registerMsg} tone={registerMsgTone} className="mt-3" />
         </form>
-        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-[0_10px_22px_rgba(15,23,42,0.12)]">
           <h3 className="text-xl font-bold">Citas Agendadas</h3>
           <label className="mt-3 grid gap-1 text-xs font-semibold text-slate-700">
             Filtrar por Fecha

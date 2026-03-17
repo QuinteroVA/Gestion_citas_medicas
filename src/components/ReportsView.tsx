@@ -40,7 +40,7 @@ export function ReportsView({
       <div>
         <h1 className="mb-5 text-2xl font-bold">Reportes de Citas Médicas</h1>
       </div>
-      <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="rounded-lg border border-slate-200 bg-white shadow-[0_10px_22px_rgba(15,23,42,0.12)]">
         <div className="border-b border-slate-200 rounded-t-lg bg-slate-50 px-4 py-4">
           <h3 className="text-xl font-bold">Reportes</h3>
           <p className="text-sm text-slate-600">Filtra y genera reportes de las citas registradas</p>
