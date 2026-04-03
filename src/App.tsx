@@ -1,23 +1,27 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { AdminView } from "./components/AdminView";
 import { AppHeader } from "./components/AppHeader";
 import { HomeView } from "./components/HomeView";
 import { LoginView } from "./components/LoginView";
 import { RegisterView } from "./components/RegisterView";
 import { ReportsView } from "./components/ReportsView";
-import { loadDB, loadDBFromApi, makeId, saveDBToApi, todayISO, tomorrowISO } from "./lib/data";
-import type { AdminTab, DB, DocType, MessageTone, ReportStatusFilter, User, View } from "./types";
+import { useDB } from "./hooks/useDB";
+import { useMessage } from "./hooks/useMessage";
+import { makeId, todayISO, tomorrowISO } from "./lib/db";
+import type { AdminTab, DocType, ReportStatusFilter, User, View } from "./types";
 
 export function App() {
-  const [db, setDb] = useState<DB>(loadDB);
-  const [isHydrated, setIsHydrated] = useState(false);
+  // ─── Base de datos ──────────────────────────────────────────────────────────
+  const { db, setDb } = useDB();
+
+  // ─── Sesión ─────────────────────────────────────────────────────────────────
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [view, setView] = useState<View>("inicio");
-
   const [loginUser, setLoginUser] = useState("");
   const [loginPass, setLoginPass] = useState("");
   const [loginError, setLoginError] = useState("");
 
+  // ─── Formulario de nueva cita ────────────────────────────────────────────────
   const [docType, setDocType] = useState<DocType>("cedula");
   const [docNumber, setDocNumber] = useState("");
   const [patientName, setPatientName] = useState("");
@@ -25,19 +29,20 @@ export function App() {
   const [apptTime, setApptTime] = useState("");
   const [apptSpecialty, setApptSpecialty] = useState("");
   const [apptDoctor, setApptDoctor] = useState("");
-  const [registerMsg, setRegisterMsg] = useState("");
-  const [registerMsgTone, setRegisterMsgTone] = useState<MessageTone>("info");
+  const registerMessage = useMessage();
 
+  // ─── Filtros de lista de citas ───────────────────────────────────────────────
   const [listDate, setListDate] = useState(todayISO());
   const [listSpecialty, setListSpecialty] = useState("all");
 
+  // ─── Filtros de reportes ─────────────────────────────────────────────────────
   const [reportDate, setReportDate] = useState(todayISO());
   const [reportSpecialty, setReportSpecialty] = useState("all");
   const [reportStatus, setReportStatus] = useState<ReportStatusFilter>("all");
 
+  // ─── Panel de administración ─────────────────────────────────────────────────
   const [adminTab, setAdminTab] = useState<AdminTab>("usuarios");
-  const [adminMsg, setAdminMsg] = useState("");
-  const [adminMsgTone, setAdminMsgTone] = useState<MessageTone>("info");
+  const adminMessage = useMessage();
   const [newUser, setNewUser] = useState("");
   const [newUserPass, setNewUserPass] = useState("");
   const [newAdminUser, setNewAdminUser] = useState("");
@@ -46,58 +51,47 @@ export function App() {
   const [newDoctor, setNewDoctor] = useState("");
   const [newDoctorSpecialty, setNewDoctorSpecialty] = useState("");
 
+  // ─── Derivados ───────────────────────────────────────────────────────────────
   const currentUser: User | null = db.users.find((u) => u.id === currentUserId) ?? null;
   const isAdmin = currentUser?.role === "admin";
-
-  const doctorsBySpecialty = useMemo(() => db.doctors.filter((d) => d.specialtyId === apptSpecialty), [db.doctors, apptSpecialty]);
 
   const specialtyName = (id: string) => db.specialties.find((s) => s.id === id)?.name ?? "Especialidad eliminada";
   const doctorName = (id: string) => db.doctors.find((d) => d.id === id)?.fullName ?? "Médico eliminado";
 
-  const availableAppointments = useMemo(() => {
-    return db.appointments
-      .filter((a) => a.date === listDate)
-      .filter((a) => listSpecialty === "all" || a.specialtyId === listSpecialty)
-      .sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`));
-  }, [db.appointments, listDate, listSpecialty]);
+  const doctorsBySpecialty = useMemo(
+    () => db.doctors.filter((d) => d.specialtyId === apptSpecialty),
+    [db.doctors, apptSpecialty]
+  );
 
-  const reportAppointments = useMemo(() => {
-    return db.appointments
-      .filter((a) => !reportDate || a.date === reportDate)
-      .filter((a) => reportSpecialty === "all" || a.specialtyId === reportSpecialty)
-      .filter((a) => reportStatus === "all" || a.status === reportStatus)
-      .sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`));
-  }, [db.appointments, reportDate, reportSpecialty, reportStatus]);
+  const availableAppointments = useMemo(
+    () =>
+      db.appointments
+        .filter((a) => a.date === listDate)
+        .filter((a) => listSpecialty === "all" || a.specialtyId === listSpecialty)
+        .sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`)),
+    [db.appointments, listDate, listSpecialty]
+  );
+
+  const reportAppointments = useMemo(
+    () =>
+      db.appointments
+        .filter((a) => !reportDate || a.date === reportDate)
+        .filter((a) => reportSpecialty === "all" || a.specialtyId === reportSpecialty)
+        .filter((a) => reportStatus === "all" || a.status === reportStatus)
+        .sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`)),
+    [db.appointments, reportDate, reportSpecialty, reportStatus]
+  );
 
   const reportStats = useMemo(() => {
     const atendidas = reportAppointments.filter((a) => a.status === "atendida").length;
     const pendientes = reportAppointments.length - atendidas;
     const porcentaje = reportAppointments.length === 0 ? 0 : Math.round((atendidas / reportAppointments.length) * 100);
-    const doctores = new Set(reportAppointments.map((a) => a.doctorId)).size;
-    return { total: reportAppointments.length, atendidas, pendientes, porcentaje, doctores };
+    return { total: reportAppointments.length, atendidas, pendientes, porcentaje };
   }, [reportAppointments]);
 
-  useEffect(() => {
-    let isMounted = true;
+  // ─── Efectos ─────────────────────────────────────────────────────────────────
 
-    const init = async () => {
-      const initialDB = await loadDBFromApi();
-      if (!isMounted) return;
-      setDb(initialDB);
-      setIsHydrated(true);
-    };
-
-    void init();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isHydrated) return;
-    void saveDBToApi(db);
-  }, [db, isHydrated]);
-
+  // Auto-completar nombre del paciente por número de documento
   useEffect(() => {
     if (!docNumber.trim()) return;
     const found = [...db.appointments]
@@ -106,34 +100,18 @@ export function App() {
     if (found) setPatientName(found.patientName);
   }, [docNumber, docType, db.appointments]);
 
+  // Resetear doctor si cambia la especialidad
   useEffect(() => {
-    if (!apptSpecialty) {
-      setApptDoctor("");
-      return;
-    }
+    if (!apptSpecialty) { setApptDoctor(""); return; }
     const valid = db.doctors.some((d) => d.id === apptDoctor && d.specialtyId === apptSpecialty);
     if (!valid) setApptDoctor("");
   }, [apptSpecialty, apptDoctor, db.doctors]);
 
-  useEffect(() => {
-    if (!registerMsg) return;
-    const timer = window.setTimeout(() => setRegisterMsg(""), 5000);
-    return () => window.clearTimeout(timer);
-  }, [registerMsg]);
-
-  useEffect(() => {
-    if (!adminMsg) return;
-    const timer = window.setTimeout(() => setAdminMsg(""), 5000);
-    return () => window.clearTimeout(timer);
-  }, [adminMsg]);
-
+  // ─── Handlers: sesión ────────────────────────────────────────────────────────
   const doLogin = (e: FormEvent) => {
     e.preventDefault();
     const user = db.users.find((u) => u.username === loginUser.trim() && u.password === loginPass);
-    if (!user) {
-      setLoginError("Usuario o contraseña incorrectos");
-      return;
-    }
+    if (!user) { setLoginError("Usuario o contraseña incorrectos"); return; }
     setCurrentUserId(user.id);
     setView("inicio");
     setLoginError("");
@@ -141,28 +119,19 @@ export function App() {
     setLoginPass("");
   };
 
+  const doLogout = () => { setCurrentUserId(null); setView("inicio"); };
+
+  // ─── Handlers: citas ─────────────────────────────────────────────────────────
   const createAppointment = (e: FormEvent) => {
     e.preventDefault();
-    setRegisterMsg("");
-
-    //if (apptDate <= todayISO()) {
-      //setRegisterMsgTone("error");
-      //setRegisterMsg("Solo se permite registrar citas para dias posteriores al actual");
-      //return;
-    //}
     if (!patientName.trim() || !docNumber.trim() || !apptSpecialty || !apptDoctor || !apptTime) {
-      setRegisterMsgTone("error");
-      setRegisterMsg("Completa todos los campos");
+      registerMessage.showMsg("Completa todos los campos", "error");
       return;
     }
-
-    const occupied = db.appointments.some((a) => a.date === apptDate && a.time === apptTime && a.doctorId === apptDoctor);
-    if (occupied) {
-      setRegisterMsgTone("error");
-      setRegisterMsg("El doctor ya tiene una cita en esa fecha y hora");
+    if (db.appointments.some((a) => a.date === apptDate && a.time === apptTime && a.doctorId === apptDoctor)) {
+      registerMessage.showMsg("El doctor ya tiene una cita en esa fecha y hora", "error");
       return;
     }
-
     setDb((prev) => ({
       ...prev,
       appointments: [
@@ -187,52 +156,40 @@ export function App() {
     setApptSpecialty("");
     setApptDoctor("");
     setApptTime("");
-    setRegisterMsgTone("success");
-    setRegisterMsg("Cita registrada exitosamente");
+    registerMessage.showMsg("Cita registrada exitosamente", "success");
   };
 
   const toggleStatus = (id: string) => {
-    const appointment = db.appointments.find((a) => a.id === id);
-    if (!appointment) return;
-    const nextStatus = appointment.status === "atendida" ? "pendiente" : "atendida";
-
+    const appt = db.appointments.find((a) => a.id === id);
+    if (!appt) return;
+    const nextStatus = appt.status === "atendida" ? "pendiente" : "atendida";
     setDb((prev) => ({
       ...prev,
       appointments: prev.appointments.map((a) => (a.id === id ? { ...a, status: nextStatus } : a)),
     }));
-    setRegisterMsgTone("success");
-    setRegisterMsg(`Cita marcada como ${nextStatus}`);
+    registerMessage.showMsg(`Cita marcada como ${nextStatus}`, "success");
   };
 
+  // ─── Handlers: administración ────────────────────────────────────────────────
   const addUser = (e: FormEvent) => {
     e.preventDefault();
-    setAdminMsg("");
     const username = newUser.trim();
     const password = newUserPass.trim();
-    if (!username || !password) {
-      setAdminMsgTone("error");
-      setAdminMsg("Completa usuario y contraseña");
-      return;
-    }
+    if (!username || !password) { adminMessage.showMsg("Completa usuario y contraseña", "error"); return; }
     if (db.users.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
-      setAdminMsgTone("error");
-      setAdminMsg("Usuario ya existe");
-      return;
+      adminMessage.showMsg("Usuario ya existe", "error"); return;
     }
-
     setDb((prev) => ({ ...prev, users: [...prev.users, { id: makeId("usr"), username, password, role: "user" }] }));
     setNewUser("");
     setNewUserPass("");
-    setAdminMsgTone("success");
-    setAdminMsg("Usuario agregado");
+    adminMessage.showMsg("Usuario agregado", "success");
   };
 
   const removeUser = (id: string) => {
     const user = db.users.find((u) => u.id === id);
     if (!user || user.role === "admin") return;
     setDb((prev) => ({ ...prev, users: prev.users.filter((u) => u.id !== id) }));
-    setAdminMsgTone("success");
-    setAdminMsg(`Usuario ${user.username} eliminado`);
+    adminMessage.showMsg(`Usuario ${user.username} eliminado`, "success");
   };
 
   const updateAdminCreds = (e: FormEvent) => {
@@ -240,24 +197,18 @@ export function App() {
     if (!currentUser || currentUser.role !== "admin") return;
     const username = newAdminUser.trim();
     const password = newAdminPass.trim();
-    if (!username || !password) {
-      setAdminMsgTone("error");
-      setAdminMsg("Completa usuario y contraseña");
-      return;
-    }
+    if (!username || !password) { adminMessage.showMsg("Completa usuario y contraseña", "error"); return; }
     if (db.users.some((u) => u.id !== currentUser.id && u.username.toLowerCase() === username.toLowerCase())) {
-      setAdminMsgTone("error");
-      setAdminMsg("Usuario ya existe");
-      return;
+      adminMessage.showMsg("Usuario ya existe", "error"); return;
     }
-    setNewAdminUser("");
-    setNewAdminPass("");
-    setDb((prev) => ({ ...prev,
+    setDb((prev) => ({
+      ...prev,
       users: prev.users.map((u) => (u.id === currentUser.id ? { ...u, username, password } : u)),
       hasChangedAdminCredentials: true,
     }));
-    setAdminMsgTone("success");
-    setAdminMsg("Credenciales actualizadas");
+    setNewAdminUser("");
+    setNewAdminPass("");
+    adminMessage.showMsg("Credenciales actualizadas", "success");
   };
 
   const addSpecialty = (e: FormEvent) => {
@@ -265,27 +216,21 @@ export function App() {
     const name = newSpecialty.trim();
     if (!name) return;
     if (db.specialties.some((s) => s.name.toLowerCase() === name.toLowerCase())) {
-      setAdminMsgTone("error");
-      setAdminMsg("Especialidad ya existe");
-      return;
+      adminMessage.showMsg("Especialidad ya existe", "error"); return;
     }
     setDb((prev) => ({ ...prev, specialties: [...prev.specialties, { id: makeId("sp"), name }] }));
     setNewSpecialty("");
-    setAdminMsgTone("success");
-    setAdminMsg("Especialidad agregada");
+    adminMessage.showMsg("Especialidad agregada", "success");
   };
 
   const removeSpecialty = (id: string) => {
     if (db.doctors.some((d) => d.specialtyId === id)) {
-      setAdminMsgTone("error");
-      setAdminMsg("No se puede eliminar, hay médicos vinculados");
-      return;
+      adminMessage.showMsg("No se puede eliminar, hay médicos vinculados", "error"); return;
     }
     const specialty = db.specialties.find((s) => s.id === id);
     if (!specialty) return;
     setDb((prev) => ({ ...prev, specialties: prev.specialties.filter((s) => s.id !== id) }));
-    setAdminMsgTone("success");
-    setAdminMsg(`Especialidad ${specialty.name} eliminada`);
+    adminMessage.showMsg(`Especialidad ${specialty.name} eliminada`, "success");
   };
 
   const addDoctor = (e: FormEvent) => {
@@ -297,8 +242,7 @@ export function App() {
     }));
     setNewDoctor("");
     setNewDoctorSpecialty("");
-    setAdminMsgTone("success");
-    setAdminMsg("Médico agregado");
+    adminMessage.showMsg("Médico agregado", "success");
   };
 
   const removeDoctor = (id: string) => {
@@ -309,10 +253,10 @@ export function App() {
       doctors: prev.doctors.filter((d) => d.id !== id),
       appointments: prev.appointments.filter((a) => a.doctorId !== id),
     }));
-    setAdminMsgTone("success");
-    setAdminMsg(`Médico ${doctor.fullName} eliminado`);
+    adminMessage.showMsg(`Médico ${doctor.fullName} eliminado`, "success");
   };
 
+  // ─── Render ──────────────────────────────────────────────────────────────────
   if (!currentUser) {
     return (
       <LoginView
@@ -336,14 +280,13 @@ export function App() {
         isAdmin={isAdmin}
         view={view}
         onViewChange={setView}
-        onLogout={() => {
-          setCurrentUserId(null);
-          setView("inicio");
-        }}
+        onLogout={doLogout}
       />
 
       <main className="mx-auto w-full max-w-5xl px-5 py-6">
-        {view === "inicio" && <HomeView onGoRegistro={() => setView("registro")} onGoReportes={() => setView("reportes")} />}
+        {view === "inicio" && (
+          <HomeView onGoRegistro={() => setView("registro")} onGoReportes={() => setView("reportes")} />
+        )}
 
         {view === "registro" && (
           <RegisterView
@@ -359,8 +302,8 @@ export function App() {
             listDate={listDate}
             listSpecialty={listSpecialty}
             availableAppointments={availableAppointments}
-            registerMsg={registerMsg}
-            registerMsgTone={registerMsgTone}
+            registerMsg={registerMessage.msg.text}
+            registerMsgTone={registerMessage.msg.tone}
             specialtyName={specialtyName}
             doctorName={doctorName}
             onDocTypeChange={setDocType}
@@ -396,8 +339,8 @@ export function App() {
         {view === "administracion" && isAdmin && (
           <AdminView
             adminTab={adminTab}
-            adminMsg={adminMsg}
-            adminMsgTone={adminMsgTone}
+            adminMsg={adminMessage.msg.text}
+            adminMsgTone={adminMessage.msg.tone}
             users={db.users}
             specialties={db.specialties}
             doctors={db.doctors}
