@@ -11,17 +11,17 @@ import { makeId, todayISO, tomorrowISO } from "./lib/db";
 import type { AdminTab, DocType, ReportStatusFilter, User, View } from "./types";
 
 export function App() {
-  // ─── Base de datos ──────────────────────────────────────────────────────────
+  // ─ Base de datos ─
   const { db, setDb } = useDB();
 
-  // ─── Sesión ─────────────────────────────────────────────────────────────────
+  // ─ Sesión ─
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [view, setView] = useState<View>("inicio");
   const [loginUser, setLoginUser] = useState("");
   const [loginPass, setLoginPass] = useState("");
   const [loginError, setLoginError] = useState("");
 
-  // ─── Formulario de nueva cita ────────────────────────────────────────────────
+  // ─ Formulario de nueva cita ─
   const [docType, setDocType] = useState<DocType>("cedula");
   const [docNumber, setDocNumber] = useState("");
   const [patientName, setPatientName] = useState("");
@@ -31,16 +31,16 @@ export function App() {
   const [apptDoctor, setApptDoctor] = useState("");
   const registerMessage = useMessage();
 
-  // ─── Filtros de lista de citas ───────────────────────────────────────────────
+  // ─ Filtros de lista de citas ─
   const [listDate, setListDate] = useState(todayISO());
   const [listSpecialty, setListSpecialty] = useState("all");
 
-  // ─── Filtros de reportes ─────────────────────────────────────────────────────
+  // ─ Filtros de reportes ─
   const [reportDate, setReportDate] = useState(todayISO());
   const [reportSpecialty, setReportSpecialty] = useState("all");
   const [reportStatus, setReportStatus] = useState<ReportStatusFilter>("all");
 
-  // ─── Panel de administración ─────────────────────────────────────────────────
+  // ─ Panel de administración ─
   const [adminTab, setAdminTab] = useState<AdminTab>("usuarios");
   const adminMessage = useMessage();
   const [newUser, setNewUser] = useState("");
@@ -51,7 +51,7 @@ export function App() {
   const [newDoctor, setNewDoctor] = useState("");
   const [newDoctorSpecialty, setNewDoctorSpecialty] = useState("");
 
-  // ─── Derivados ───────────────────────────────────────────────────────────────
+  // ─ Derivados ─
   const currentUser: User | null = db.users.find((u) => u.id === currentUserId) ?? null;
   const isAdmin = currentUser?.role === "admin";
 
@@ -89,7 +89,7 @@ export function App() {
     return { total: reportAppointments.length, atendidas, pendientes, porcentaje };
   }, [reportAppointments]);
 
-  // ─── Efectos ─────────────────────────────────────────────────────────────────
+  // ─ Efectos ─
 
   // Auto-completar nombre del paciente por número de documento
   useEffect(() => {
@@ -107,7 +107,7 @@ export function App() {
     if (!valid) setApptDoctor("");
   }, [apptSpecialty, apptDoctor, db.doctors]);
 
-  // ─── Handlers: sesión ────────────────────────────────────────────────────────
+  // ─ Handlers: sesión ─
   const doLogin = (e: FormEvent) => {
     e.preventDefault();
     const user = db.users.find((u) => u.username === loginUser.trim() && u.password === loginPass);
@@ -121,7 +121,7 @@ export function App() {
 
   const doLogout = () => { setCurrentUserId(null); setView("inicio"); };
 
-  // ─── Handlers: citas ─────────────────────────────────────────────────────────
+  // ─ Handlers: citas ─
   const createAppointment = (e: FormEvent) => {
     e.preventDefault();
     if (!patientName.trim() || !docNumber.trim() || !apptSpecialty || !apptDoctor || !apptTime) {
@@ -170,7 +170,7 @@ export function App() {
     registerMessage.showMsg(`Cita marcada como ${nextStatus}`, "success");
   };
 
-  // ─── Handlers: administración ────────────────────────────────────────────────
+  // ─ Handlers: administración ─
   const addUser = (e: FormEvent) => {
     e.preventDefault();
     const username = newUser.trim();
@@ -256,7 +256,7 @@ export function App() {
     adminMessage.showMsg(`Médico ${doctor.fullName} eliminado`, "success");
   };
 
-  // ─── Render ──────────────────────────────────────────────────────────────────
+  // ─ Render ─
   if (!currentUser) {
     return (
       <LoginView
