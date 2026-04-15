@@ -72,7 +72,7 @@ export function LoginView({
                 className="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600"
                 aria-label={showPass ? "Ocultar contraseña" : "Mostrar contraseña"}
               >
-                <i className={showPass ? "iconoir-eye" : "iconoir-eye-closed"} />
+                <i className={showPass ? "iconoir-eye-solid" : "iconoir-eye-closed"} />
               </button>
             </div>
           </label>
