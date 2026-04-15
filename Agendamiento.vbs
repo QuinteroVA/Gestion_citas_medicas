@@ -1,7 +1,2 @@
-Set shell = CreateObject("WScript.Shell")
-Set fso = CreateObject("Scripting.FileSystemObject")
-
-projectPath = fso.GetParentFolderName(WScript.ScriptFullName)
-psScript = projectPath & "\Agendamiento.ps1"
-
-shell.Run "powershell -ExecutionPolicy Bypass -WindowStyle Hidden -File """ & psScript & """", 0, False
+Set objShell = CreateObject("WScript.Shell")
+objShell.Run """" & Left(WScript.ScriptFullName, InStrRev(WScript.ScriptFullName, "\")) & "dev-all.bat""", 0, False

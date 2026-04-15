@@ -1,4 +1,4 @@
-import type { FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 
 type LoginViewProps = {
   loginUser: string;
@@ -19,12 +19,15 @@ export function LoginView({
   onPassChange,
   onSubmit,
 }: LoginViewProps) {
+  const [showPass, setShowPass] = useState(false);
+  
   return (
     <div className="min-h-screen bg-[#dff3f4] px-4 py-8 text-slate-900">
       <div className="mx-auto flex min-h-[88vh] max-w-[360px] flex-col items-center justify-center">
-        <img src="/image/hospital.png" alt="Logo" className="h-22 w-22 object-contain" />
-
-        <h1 className="mt-6 text-center text-2xl font-bold leading-tight">Citas Médicas</h1>
+        <div className="mx-auto flex h-22 w-22 items-center justify-center">
+          <img src="/image/hospital.png" alt="Logo" className="h-full w-full object-contain" />
+        </div>
+        <h1 className="mt-6 text-center text-3xl font-bold leading-tight">Citas Médicas</h1>
         <p className="mt-2 text-center text-sm text-slate-600">Ingresa tus credenciales para continuar</p>
 
         <form
@@ -56,13 +59,21 @@ export function LoginView({
                 <i className="iconoir-lock" />
               </span>
               <input
-                type="password"
+                type={showPass ? "text" : "password"}
                 value={loginPass}
                 onChange={(e) => onPassChange(e.target.value)}
                 className="h-11 w-full rounded-xl border border-slate-300 bg-slate-50 pl-10 pr-3 text-sm"
                 placeholder="Ingresa tu contraseña"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPass((prev) => !prev)}
+                className="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600"
+                aria-label={showPass ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                <i className={showPass ? "iconoir-eye" : "iconoir-eye-closed"} />
+              </button>
             </div>
           </label>
 
