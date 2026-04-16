@@ -1,8 +1,8 @@
-// ─── Roles y vistas ───────────────────────────────────────────────────────────
+// ─ Roles y vistas ─
 export type Role = "admin" | "user";
 export type View = "inicio" | "registro" | "reportes" | "administracion";
 
-// ─── Entidades del dominio ────────────────────────────────────────────────────
+// ─ Entidades del dominio ─
 export type DocType = "cedula" | "pasaporte";
 export type AppointmentStatus = "pendiente" | "atendida";
 export type AdminTab = "usuarios" | "credenciales" | "especialidades" | "medicos";

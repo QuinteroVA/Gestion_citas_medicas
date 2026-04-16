@@ -1,5 +1,6 @@
 import type { FormEvent } from "react";
 import type { User } from "../../types";
+import { PasswordInput } from "../shared/PasswordInput";
 
 type UsersTabProps = {
   users: User[];
@@ -18,8 +19,20 @@ export function UsersTab({ users, newUser, newUserPass, onNewUserChange, onNewUs
       <form onSubmit={onAddUser} className="mt-4">
         <p className="font-semibold">Agregar Nuevo Usuario</p>
         <div className="mt-3 grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-          <input value={newUser} onChange={(e) => onNewUserChange(e.target.value)} placeholder="Nombre de usuario" className="h-10 rounded-lg border border-slate-300 px-3" required />
-          <input type="password" value={newUserPass} onChange={(e) => onNewUserPassChange(e.target.value)} placeholder="Contraseña" className="h-10 rounded-lg border border-slate-300 px-3" required />
+          <input
+            value={newUser}
+            onChange={(e) => onNewUserChange(e.target.value)}
+            placeholder="Nombre de usuario"
+            className="h-10 rounded-lg border border-slate-300 px-3"
+            required
+          />
+          <PasswordInput
+            value={newUserPass}
+            onChange={onNewUserPassChange}
+            placeholder="Contraseña"
+            inputClassName="h-10"
+            required
+          />
           <button className="h-10 rounded-lg bg-teal-600 px-5 text-sm font-semibold text-white hover:bg-teal-700">
             <i className="fa fa-check-square-o mr-1" /> Agregar
           </button>

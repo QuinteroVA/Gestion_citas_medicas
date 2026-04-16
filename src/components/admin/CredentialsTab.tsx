@@ -1,4 +1,5 @@
 import type { FormEvent } from "react";
+import { PasswordInput } from "../shared/PasswordInput";
 
 type CredentialsTabProps = {
   newAdminUser: string;
@@ -13,8 +14,20 @@ export function CredentialsTab({ newAdminUser, newAdminPass, onNewAdminUserChang
     <form onSubmit={onUpdateAdminCreds} className="space-y-3">
       <h3 className="text-2xl font-bold">Cambiar Credenciales</h3>
       <div className="grid gap-3 md:grid-cols-2">
-        <input value={newAdminUser} onChange={(e) => onNewAdminUserChange(e.target.value)} placeholder="Nuevo usuario admin" className="h-11 rounded-lg border border-slate-300 px-3" required />
-        <input type="password" value={newAdminPass} onChange={(e) => onNewAdminPassChange(e.target.value)} placeholder="Nueva contraseña admin" className="h-11 rounded-lg border border-slate-300 px-3" required />
+        <input
+          value={newAdminUser}
+          onChange={(e) => onNewAdminUserChange(e.target.value)}
+          placeholder="Nuevo usuario admin"
+          className="h-11 rounded-lg border border-slate-300 px-3"
+          required
+        />
+        <PasswordInput
+          value={newAdminPass}
+          onChange={onNewAdminPassChange}
+          placeholder="Nueva contraseña admin"
+          inputClassName="h-11"
+          required
+        />
       </div>
       <button className="h-10 rounded-lg bg-teal-600 px-5 text-white hover:bg-teal-700">
         <i className="fa fa-save mr-1" /> Guardar
