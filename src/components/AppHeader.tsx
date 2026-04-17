@@ -17,6 +17,7 @@ const NAV_ITEMS: { label: string; value: View }[] = [
 
 export function AppHeader({ currentUser, isAdmin, view, onViewChange, onLogout }: AppHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+
   const navItems = isAdmin
     ? [...NAV_ITEMS, { label: "Administración", value: "administracion" as View }]
     : NAV_ITEMS;
@@ -32,15 +33,16 @@ export function AppHeader({ currentUser, isAdmin, view, onViewChange, onLogout }
   };
 
   return (
-    <header className="no-print border-b border-slate-200 bg-white">
+    <header className="no-print fixed top-0 left-0 right-0 z-50 border-b border-slate-200 bg-white shadow-sm">
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-5 py-3">
-        {/* - Logo - */}
+
+        {/* ── Logo ── */}
         <div className="flex items-center gap-3">
           <img src="/image/agenda.png" alt="Logo" className="h-12 w-12 object-contain" />
-          <h1 className="text-3xl font-bold leading-none">Agendamiento</h1>
+          <h1 className="text-2xl font-bold leading-none md:text-3xl">Agendamiento</h1>
         </div>
 
-        {/* ─ Navegación escritorio ─ */}
+        {/* ── Navegación escritorio ── */}
         <div className="hidden items-center gap-5 text-sm md:flex">
           <nav className="flex items-center gap-5 border-r border-slate-200 pr-4">
             {navItems.map((item) => (
@@ -69,7 +71,7 @@ export function AppHeader({ currentUser, isAdmin, view, onViewChange, onLogout }
           </button>
         </div>
 
-        {/* ─ Botón hamburguesa móvil ─ */}
+        {/* ── Botón hamburguesa móvil ── */}
         <button
           className="flex flex-col items-center justify-center gap-1.5 md:hidden"
           onClick={() => setMenuOpen((prev) => !prev)}
@@ -81,10 +83,9 @@ export function AppHeader({ currentUser, isAdmin, view, onViewChange, onLogout }
         </button>
       </div>
 
-      {/* ─ Menú desplegable móvil ─ */}
+      {/* ── Menú desplegable móvil ── */}
       {menuOpen && (
         <div className="border-t border-slate-100 bg-white px-5 py-4 md:hidden">
-          {/* Usuario */}
           <div className="mb-3 flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2">
             <i className="fa fa-user-circle text-slate-400" />
             <div>
@@ -92,8 +93,6 @@ export function AppHeader({ currentUser, isAdmin, view, onViewChange, onLogout }
               <p className="text-sm font-semibold">{currentUser.username}</p>
             </div>
           </div>
-
-          {/* Links de navegación */}
           <nav className="flex flex-col gap-1">
             {navItems.map((item) => (
               <button
@@ -112,8 +111,6 @@ export function AppHeader({ currentUser, isAdmin, view, onViewChange, onLogout }
               </button>
             ))}
           </nav>
-
-          {/* Cerrar sesión */}
           <button
             onClick={handleLogout}
             className="mt-3 w-full rounded-lg bg-rose-500 py-2.5 text-sm font-semibold text-white hover:bg-rose-600"
