@@ -22,7 +22,7 @@ export function LoginView({ loginUser, loginPass, loginError, showInitialAccess,
         <p className="mt-2 text-center text-[14px] text-slate-600">Ingresa tus credenciales para continuar</p>
         <form onSubmit={onSubmit} className="mt-7 w-full rounded-2xl bg-slate-100 p-6 shadow-[0_10px_22px_rgba(15,23,42,0.12)]">
 
-          {/* ── Usuario ── */}
+          {/* ─ Usuario ─ */}
           <label className="mb-4 grid gap-2 text-[14px] font-semibold text-slate-700">
             Usuario
             <div className="relative">
@@ -39,7 +39,7 @@ export function LoginView({ loginUser, loginPass, loginError, showInitialAccess,
             </div>
           </label>
 
-          {/* ── Contraseña con PasswordInput ── */}
+          {/* ─ Contraseña con PasswordInput ─ */}
           <label className="grid gap-2 text-[14px] font-semibold text-slate-700">
             Contraseña
             <PasswordInput
@@ -54,8 +54,8 @@ export function LoginView({ loginUser, loginPass, loginError, showInitialAccess,
 
           {loginError && <p className="mt-3 text-sm text-rose-600">{loginError}</p>}
 
-          <button className="mt-5 h-10 w-full rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-sm font-semibold text-white shadow-md shadow-cyan-300/50 hover:from-teal-600 hover:to-cyan-600">
-            Iniciar Sesión
+          <button className="mt-5 h-10 w-full rounded-xl bg-linear-to-r from-teal-500 to-cyan-500 text-sm font-semibold text-white shadow-md shadow-cyan-300/50 hover:from-teal-600 hover:to-cyan-600">
+            <i className="bi bi-person-walking"></i><i className="bi bi-door-open"></i> Ingresar
           </button>
 
           {showInitialAccess && (

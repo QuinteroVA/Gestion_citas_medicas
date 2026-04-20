@@ -1,6 +1,6 @@
 import type { DB, MessageTone } from "../types";
 
-// ─── Constantes ───────────────────────────────────────────────────────────────
+// ─ Constantes ─
 export const STORAGE_KEY = "medical-appointments-db-v3";
 export const API_URL = "http://localhost:4000/api/db";
 
@@ -12,7 +12,7 @@ export const defaultDB: DB = {
   hasChangedAdminCredentials: false,
 };
 
-// ─── Normalización ────────────────────────────────────────────────────────────
+// ─ Normalización ─
 const normalizeDB = (raw: Partial<DB> | null | undefined): DB => {
   if (!raw) return defaultDB;
   const users = Array.isArray(raw.users) ? raw.users : defaultDB.users;
@@ -28,7 +28,7 @@ const normalizeDB = (raw: Partial<DB> | null | undefined): DB => {
   };
 };
 
-// ─── Fechas ───────────────────────────────────────────────────────────────────
+// ─ Fechas ─
 const localISO = (offset = 0): string => {
   const d = new Date();
   d.setDate(d.getDate() + offset);
@@ -43,11 +43,11 @@ export const formatDate = (date: string) => {
   return `${d}/${m}/${y}`;
 };
 
-// ─── IDs ──────────────────────────────────────────────────────────────────────
+// ─ IDs ─
 export const makeId = (prefix: string) =>
   `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-// ─── Persistencia ─────────────────────────────────────────────────────────────
+// ─ Persistencia ─
 export const loadDB = (): DB => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -83,7 +83,7 @@ export const saveDBToApi = async (db: DB): Promise<void> => {
   }
 };
 
-// ─── Estilos de mensajes ──────────────────────────────────────────────────────
+// ─ Estilos de mensajes ─
 export const messageToneStyles: Record<MessageTone, string> = {
   success: "border-emerald-400 bg-emerald-100 text-emerald-800",
   error: "border-rose-300 bg-rose-50 text-rose-700",

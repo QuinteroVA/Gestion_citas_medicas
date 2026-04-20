@@ -49,7 +49,9 @@ export function ReportsView({
       <div className="rounded-lg border border-slate-200 bg-white shadow-[0_10px_22px_rgba(15,23,42,0.12)]">
         {/* Encabezado */}
         <div className="rounded-t-lg border-b border-slate-200 bg-slate-50 px-4 py-4">
-          <h3 className="text-xl font-bold">Reportes</h3>
+          <h3 className="text-xl font-bold">
+            <i className="bi bi-layout-text-window-reverse"></i>  Reportes
+          </h3>
           <p className="text-sm text-slate-600">Filtra y genera reportes de las citas registradas</p>
         </div>
 

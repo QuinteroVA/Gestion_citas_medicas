@@ -39,11 +39,11 @@ type AdminViewProps = {
   onRemoveDoctor: (id: string) => void;
 };
 
-const TABS: { label: string; value: AdminTab }[] = [
-  { label: "Gestión de Usuarios", value: "usuarios" },
-  { label: "Cambiar Credenciales", value: "credenciales" },
-  { label: "Especialidades", value: "especialidades" },
-  { label: "Médicos", value: "medicos" },
+const TABS: { label: string; value: AdminTab; icon: string }[] = [
+  { label: 'Gestión de Usuarios', value: 'usuarios', icon: 'iconoir-user' },
+  { label: 'Cambiar Credenciales', value: 'credenciales', icon: 'iconoir-lock' },
+  { label: 'Especialidades', value: 'especialidades', icon: 'iconoir-heart-rate-monitor' },
+  { label: 'Médicos', value: 'medicos', icon: 'iconoir-user-circle' },
 ];
 
 export function AdminView(props: AdminViewProps) {
@@ -52,12 +52,18 @@ export function AdminView(props: AdminViewProps) {
   return (
     <section>
       <h1 className="mb-5 text-2xl font-bold">Panel de Administración</h1>
-
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_22px_rgba(15,23,42,0.12)]">
         {/* Pestañas */}
         <div className="grid border-b border-slate-200 md:grid-cols-4">
           {TABS.map((tab) => (
-            <TabButton key={tab.value} {...tab} active={adminTab} onChange={onAdminTabChange} />
+            <TabButton
+              key={tab.value}
+              label={tab.label}
+              value={tab.value}
+              active={adminTab}
+              icon={tab.icon}
+              onChange={onAdminTabChange}
+            />
           ))}
         </div>
 

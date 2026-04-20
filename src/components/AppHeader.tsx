@@ -36,13 +36,13 @@ export function AppHeader({ currentUser, isAdmin, view, onViewChange, onLogout }
     <header className="no-print fixed top-0 left-0 right-0 z-50 border-b border-slate-200 bg-white shadow-sm">
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-5 py-3">
 
-        {/* ── Logo ── */}
+        {/* ─ Logo ─ */}
         <div className="flex items-center gap-3">
           <img src="/image/agenda.png" alt="Logo" className="h-12 w-12 object-contain" />
           <h1 className="text-2xl font-bold leading-none md:text-3xl">Agendamiento</h1>
         </div>
 
-        {/* ── Navegación escritorio ── */}
+        {/* ─ Navegación escritorio ─ */}
         <div className="hidden items-center gap-5 text-sm md:flex">
           <nav className="flex items-center gap-5 border-r border-slate-200 pr-4">
             {navItems.map((item) => (
@@ -67,11 +67,11 @@ export function AppHeader({ currentUser, isAdmin, view, onViewChange, onLogout }
             onClick={handleLogout}
             className="rounded-lg bg-rose-500 px-4 py-2 font-semibold text-white hover:bg-rose-600"
           >
-            <i className="fa fa-sign-out mr-1" /> Cerrar sesión
+            Salir <i className="bi bi-door-closed"></i><i className="bi bi-person-walking"></i>
           </button>
         </div>
 
-        {/* ── Botón hamburguesa móvil ── */}
+        {/* ─ Botón hamburguesa móvil ─ */}
         <button
           className="flex flex-col items-center justify-center gap-1.5 md:hidden"
           onClick={() => setMenuOpen((prev) => !prev)}
@@ -83,7 +83,7 @@ export function AppHeader({ currentUser, isAdmin, view, onViewChange, onLogout }
         </button>
       </div>
 
-      {/* ── Menú desplegable móvil ── */}
+      {/* ─ Menú desplegable móvil ─ */}
       {menuOpen && (
         <div className="border-t border-slate-100 bg-white px-5 py-4 md:hidden">
           <div className="mb-3 flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2">
@@ -115,7 +115,7 @@ export function AppHeader({ currentUser, isAdmin, view, onViewChange, onLogout }
             onClick={handleLogout}
             className="mt-3 w-full rounded-lg bg-rose-500 py-2.5 text-sm font-semibold text-white hover:bg-rose-600"
           >
-            <i className="fa fa-sign-out mr-1" /> Cerrar sesión
+            Salir <i className="bi bi-door-closed"></i><i className="bi bi-person-walking"></i>
           </button>
         </div>
       )}

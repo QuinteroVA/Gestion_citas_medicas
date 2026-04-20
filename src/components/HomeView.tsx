@@ -42,6 +42,7 @@ export function HomeView({ onGoRegistro, onGoReportes }: HomeViewProps) {
     key={card.title}
     onClick={card.onClick}
     className="rounded-2xl border border-slate-200 bg-white p-10 text-left shadow-[0_10px_22px_rgba(15,23,42,0.12)] hover:shadow-lg transition-shadow"
+    /*className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer"*/
   >
     <img
       src={card.img}
@@ -52,6 +53,7 @@ export function HomeView({ onGoRegistro, onGoReportes }: HomeViewProps) {
     <p className="mt-3 text-slate-600">{card.description}</p>
     <p className="mt-4 font-semibold text-cyan-700">{card.linkText}</p>
   </button>
+  
 ))}
       </div>
     </section>

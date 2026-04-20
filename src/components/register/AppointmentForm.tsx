@@ -57,7 +57,7 @@ export function AppointmentForm({
                 : "h-9 rounded-md border border-slate-300 bg-slate-50 text-xs"
             }
           >
-            <i className={`fa ${type === "cedula" ? "fa-address-card-o" : "fa-address-card"} mr-1`} />
+            <i className={`fa ${type === "cedula" ? "fa-id-card-o" : "fa-regular fa-id-badge"} mr-1`} />
             {type === "cedula" ? "Cédula" : "Pasaporte"}
           </button>
         ))}
